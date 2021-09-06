@@ -2,7 +2,6 @@
 
 require_once __DIR__.'/database-connection.php';
 
-
     class config_db{
         private $db;
 		private $query;
@@ -15,10 +14,11 @@ require_once __DIR__.'/database-connection.php';
             }
             else{
                 $this->query = 'CREATE TABLE branches(
-                    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                    id INT NOT NULL UNIQUE AUTO_INCREMENT,
                     college_name VARCHAR(50),
                     course_name VARCHAR(50),
-                    branch_name VARCHAR(50)
+                    branch_name VARCHAR(50),
+                    PRIMARY KEY(college_name, course_name, branch_name)
                 )';
                 if($this->db->query($this->query)){
                     echo '1) Table for Branches created successfully <br>';
