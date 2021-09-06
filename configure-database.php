@@ -2,6 +2,7 @@
 
 require_once __DIR__.'/database-connection.php';
 
+
     class config_db{
         private $db;
 		private $query;
