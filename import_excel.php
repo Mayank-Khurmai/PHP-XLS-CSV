@@ -9,9 +9,15 @@ class import_sheet
     private $filename;
     private $file;
     private $response;
+    private $loop_count;
     private $college_name;
     private $course_name;
     private $branch_name;
+    private $batch_name;
+    private $fee_category;
+    private $fee_types;
+    private $fee_collection_head;
+
 
     public function __construct()
     {
@@ -23,13 +29,24 @@ class import_sheet
                 $this->db = new db();
                 $this->db = $this->db->database();
                 $this->file = fopen($this->filename, "r");
-                // print_r(fgetcsv($this->file, ","));       //Raw Data
+                print_r(fgetcsv($this->file, ","));       //Raw Data
+                echo "<br><br>";
+                $this->loop_count = 0;
                 while(($this->getData = fgetcsv($this->file, ",")) !== FALSE)
                 {
+                    if($this->loop_count == 0){
+                        $this->loop_count++;
+                        continue;
+                    }
+                    // continue;
                     $this->college_name = $this->getData[11];
                     $this->course_name = $this->getData[12];
                     $this->branch_name = $this->getData[13];
-                    $this->query = "INSERT IGNORE INTO branches(college_name, course_name, branch_name) VALUES('$this->college_name', '$this->course_name', '$this->branch_name')";
+                    $this->batch_name = $this->getData[14];
+                    $this->fee_category = $this->getData[10];
+                    $this->fee_types = $this->getData[16];
+                    $this->fee_collection_head = $this->getData[16];
+                    $this->query = "INSERT IGNORE INTO branches(college_name, course_name, branch_name, batch_name) VALUES('$this->college_name', '$this->course_name', '$this->branch_name', '$this->batch_name')";
                     $this->response = $this->db->query($this->query);
                     if($this->response)
                     {
@@ -40,6 +57,48 @@ class import_sheet
                         echo $this->getData[0] . "--------------Failed";
                         echo "<br>";
                     }
+
+
+                    $this->query = "INSERT IGNORE INTO fee_category(fee_category, branch_id) VALUES('$this->fee_category', (SELECT branch_id FROM branches WHERE college_name='$this->college_name' AND course_name='$this->course_name' AND branch_name='$this->branch_name'))";
+                    $this->response = $this->db->query($this->query);
+                    if($this->response)
+                    {
+                        echo $this->fee_category;
+                        echo "<br>";
+                    }
+                    else{
+                        echo $this->fee_category . "--------------Failed";
+                        echo "<br>";
+                    }
+
+
+                    $this->query = "INSERT IGNORE INTO fee_collection_type(fee_type_head, branch_id) VALUES('$this->fee_collection_head', (SELECT branch_id FROM branches WHERE college_name='$this->college_name' AND course_name='$this->course_name' AND branch_name='$this->branch_name'))";
+                    $this->response = $this->db->query($this->query);
+                    if($this->response)
+                    {
+                        echo $this->fee_types;
+                        echo "<br>";
+                    }
+                    else{
+                        echo $this->fee_types . "--------------Failed";
+                        echo "<br>";
+                    }
+
+
+                    $this->query = "INSERT IGNORE INTO fee_types(fee_types) VALUES('$this->fee_types')";
+                    $this->response = $this->db->query($this->query);
+                    if($this->response)
+                    {
+                        echo $this->fee_types;
+                        echo "<br>";
+                    }
+                    else{
+                        echo $this->fee_types . "--------------Failed";
+                        echo "<br>";
+                    }
+
+
+                    echo "<br><br>";
                 }
                 fclose($this->file);  
             }

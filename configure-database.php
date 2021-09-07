@@ -1,5 +1,29 @@
 <?php
 
+$mysqli = new mysqli('localhost','root','','icloudems');
+$mysqli->query('SET foreign_key_checks = 0');
+if ($result = $mysqli->query("SHOW TABLES"))
+{
+    while($row = $result->fetch_array(MYSQLI_NUM))
+    {
+        $mysqli->query('DROP TABLE IF EXISTS '.$row[0]);
+        echo "<br>";
+        echo $row[0].",\n";
+    }
+}
+
+$mysqli->query('SET foreign_key_checks = 1');
+$mysqli->close();
+
+
+echo "<br>---------<br>";
+?>
+
+
+
+
+<?php
+
 require_once __DIR__.'/database-connection.php';
 
     class config_db{
@@ -14,11 +38,12 @@ require_once __DIR__.'/database-connection.php';
             }
             else{
                 $this->query = 'CREATE TABLE branches(
-                    id INT NOT NULL UNIQUE AUTO_INCREMENT,
+                    branch_id INT NOT NULL UNIQUE AUTO_INCREMENT,
                     college_name VARCHAR(50),
                     course_name VARCHAR(50),
                     branch_name VARCHAR(50),
-                    PRIMARY KEY(college_name, course_name, branch_name)
+                    batch_name VARCHAR(50),
+                    PRIMARY KEY(college_name, course_name, branch_name, batch_name)
                 )';
                 if($this->db->query($this->query)){
                     echo '1) Table for Branches created successfully <br>';
@@ -34,11 +59,9 @@ require_once __DIR__.'/database-connection.php';
             }
             else{
                 $this->query = 'CREATE TABLE fee_category(
-                    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                    email VARCHAR(40) NOT NULL UNIQUE,
-                    otp INT(6) DEFAULT 0,
-                    count INT(5) DEFAULT 0,
-                    date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+                    fee_category_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                    fee_category VARCHAR(50),
+                    branch_id INT NOT NULL UNIQUE
                 )';
                 if($this->db->query($this->query)){
                     echo '2) Table for Fee_Category created successfully <br>';
@@ -53,11 +76,9 @@ require_once __DIR__.'/database-connection.php';
             }
             else{
                 $this->query = 'CREATE TABLE fee_collection_type(
-                    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                    email VARCHAR(40) NOT NULL UNIQUE,
-                    otp INT(6) DEFAULT 0,
-                    count INT(5) DEFAULT 0,
-                    date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+                    fee_collection_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                    fee_type_head VARCHAR(50),
+                    branch_id INT NOT NULL UNIQUE
                 )';
                 if($this->db->query($this->query)){
                     echo '3) Table for Fee_Collection_Type created successfully <br>';
@@ -72,11 +93,9 @@ require_once __DIR__.'/database-connection.php';
             }
             else{
                 $this->query = 'CREATE TABLE fee_types(
-                    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                    email VARCHAR(40) NOT NULL UNIQUE,
-                    otp INT(6) DEFAULT 0,
-                    count INT(5) DEFAULT 0,
-                    date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+                    fee_types_id INT NOT NULL UNIQUE AUTO_INCREMENT,
+                    fee_types VARCHAR(50),
+                    PRIMARY KEY(fee_types)
                 )';
                 if($this->db->query($this->query)){
                     echo '4) Table for Fee_Types created successfully <br>';
