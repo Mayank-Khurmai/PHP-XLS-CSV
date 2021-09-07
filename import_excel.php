@@ -46,16 +46,18 @@ class import_sheet
                     $this->fee_category = $this->getData[10];
                     $this->fee_types = $this->getData[16];
                     $this->fee_collection_head = $this->getData[16];
+
+
                     $this->query = "INSERT IGNORE INTO branches(college_name, course_name, branch_name, batch_name) VALUES('$this->college_name', '$this->course_name', '$this->branch_name', '$this->batch_name')";
                     $this->response = $this->db->query($this->query);
                     if($this->response)
                     {
-                        echo $this->getData[0];
-                        echo "<br>";
+                        // echo $this->getData[0];
+                        // echo "<br>";
                     }
                     else{
-                        echo $this->getData[0] . "--------------Failed";
-                        echo "<br>";
+                        // echo $this->getData[0] . "--------------Failed";
+                        // echo "<br>";
                     }
 
                     
@@ -64,12 +66,12 @@ class import_sheet
                     $this->response = $this->db->query($this->query);
                     if($this->response)
                     {
-                        echo $this->fee_category;
-                        echo "<br>";
+                        // echo $this->fee_category;
+                        // echo "<br>";
                     }
                     else{
-                        echo $this->fee_category . "--------------Failed";
-                        echo "<br>";
+                        // echo $this->fee_category . "--------------Failed";
+                        // echo "<br>";
                     }
 
                     
@@ -77,17 +79,15 @@ class import_sheet
                     $this->response = $this->db->query($this->query);
                     if($this->response)
                     {
-                        echo $this->fee_types;
-                        echo "<br>";
+                        // echo $this->fee_types;
+                        // echo "<br>";
                     }
                     else{
-                        echo $this->fee_types . "--------------Failed 2";
-                        echo "<br>";
+                        // echo $this->fee_types . "--------------Failed 2";
+                        // echo "<br>";
                     }
-
-
-
-                    $this->query = "INSERT IGNORE INTO fee_types(fee_types) VALUES('$this->fee_types')";
+                }
+                    $this->query = "INSERT INTO fee_types(fee_category_id, fee_category, fee_collection_id, fee_type_head, branch_id) SELECT fee_category.fee_category_id, fee_category.fee_category, fee_collection_type.fee_collection_id, fee_collection_type.fee_type_head, fee_collection_type.branch_id FROM fee_category, fee_collection_type WHERE fee_category.branch_id = fee_collection_type.branch_id";
                     $this->response = $this->db->query($this->query);
                     if($this->response)
                     {
@@ -98,10 +98,6 @@ class import_sheet
                         echo $this->fee_types . "--------------Failed";
                         echo "<br>";
                     }
-
-
-                    echo "<br><br>";
-                }
                 fclose($this->file);  
             }
             else{

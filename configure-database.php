@@ -78,7 +78,7 @@ require_once __DIR__.'/database-connection.php';
                 $this->query = 'CREATE TABLE fee_collection_type(
                     fee_collection_id INT NOT NULL UNIQUE AUTO_INCREMENT,
                     fee_type_head VARCHAR(100) NOT NULL,
-                    branch_id BIGINT(100) NOT NULL,
+                    branch_id BIGINT(10) NOT NULL,
                     PRIMARY KEY(fee_type_head, branch_id)
                 )';
                 if($this->db->query($this->query)){
@@ -95,8 +95,12 @@ require_once __DIR__.'/database-connection.php';
             else{
                 $this->query = 'CREATE TABLE fee_types(
                     fee_types_id INT NOT NULL UNIQUE AUTO_INCREMENT,
-                    fee_types VARCHAR(50),
-                    PRIMARY KEY(fee_types)
+                    fee_category_id BIGINT(10),
+                    fee_category VARCHAR(100),
+                    fee_collection_id BIGINT(10),
+                    fee_type_head VARCHAR(100),
+                    branch_id BIGINT(10) NOT NULL,
+                    PRIMARY KEY(fee_types_id)
                 )';
                 if($this->db->query($this->query)){
                     echo '4) Table for Fee_Types created successfully <br>';
