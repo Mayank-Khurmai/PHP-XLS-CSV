@@ -39,10 +39,10 @@ require_once __DIR__.'/database-connection.php';
             else{
                 $this->query = 'CREATE TABLE branches(
                     branch_id INT NOT NULL UNIQUE AUTO_INCREMENT,
-                    college_name VARCHAR(50),
-                    course_name VARCHAR(50),
-                    branch_name VARCHAR(50),
-                    batch_name VARCHAR(50),
+                    college_name VARCHAR(100),
+                    course_name VARCHAR(100),
+                    branch_name VARCHAR(100),
+                    batch_name VARCHAR(100),
                     PRIMARY KEY(college_name, course_name, branch_name, batch_name)
                 )';
                 if($this->db->query($this->query)){
@@ -60,7 +60,7 @@ require_once __DIR__.'/database-connection.php';
             else{
                 $this->query = 'CREATE TABLE fee_category(
                     fee_category_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                    fee_category VARCHAR(50),
+                    fee_category VARCHAR(100),
                     branch_id INT NOT NULL UNIQUE
                 )';
                 if($this->db->query($this->query)){
@@ -76,9 +76,10 @@ require_once __DIR__.'/database-connection.php';
             }
             else{
                 $this->query = 'CREATE TABLE fee_collection_type(
-                    fee_collection_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                    fee_type_head VARCHAR(50),
-                    branch_id INT NOT NULL UNIQUE
+                    fee_collection_id INT NOT NULL UNIQUE AUTO_INCREMENT,
+                    fee_type_head VARCHAR(100) NOT NULL,
+                    branch_id BIGINT(100) NOT NULL,
+                    PRIMARY KEY(fee_type_head, branch_id)
                 )';
                 if($this->db->query($this->query)){
                     echo '3) Table for Fee_Collection_Type created successfully <br>';

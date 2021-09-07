@@ -58,8 +58,9 @@ class import_sheet
                         echo "<br>";
                     }
 
+                    
 
-                    $this->query = "INSERT IGNORE INTO fee_category(fee_category, branch_id) VALUES('$this->fee_category', (SELECT branch_id FROM branches WHERE college_name='$this->college_name' AND course_name='$this->course_name' AND branch_name='$this->branch_name'))";
+                    $this->query = "INSERT IGNORE INTO fee_category(fee_category, branch_id) VALUES('$this->fee_category', (SELECT branch_id FROM branches WHERE college_name='$this->college_name' AND course_name='$this->course_name' AND branch_name='$this->branch_name' AND batch_name='$this->batch_name'))";
                     $this->response = $this->db->query($this->query);
                     if($this->response)
                     {
@@ -71,8 +72,8 @@ class import_sheet
                         echo "<br>";
                     }
 
-
-                    $this->query = "INSERT IGNORE INTO fee_collection_type(fee_type_head, branch_id) VALUES('$this->fee_collection_head', (SELECT branch_id FROM branches WHERE college_name='$this->college_name' AND course_name='$this->course_name' AND branch_name='$this->branch_name'))";
+                    
+                    $this->query = "INSERT IGNORE INTO fee_collection_type(fee_type_head, branch_id) VALUES('$this->fee_collection_head', (SELECT branch_id FROM branches WHERE college_name='$this->college_name' AND course_name='$this->course_name' AND branch_name='$this->branch_name' AND batch_name='$this->batch_name'))";
                     $this->response = $this->db->query($this->query);
                     if($this->response)
                     {
@@ -80,9 +81,10 @@ class import_sheet
                         echo "<br>";
                     }
                     else{
-                        echo $this->fee_types . "--------------Failed";
+                        echo $this->fee_types . "--------------Failed 2";
                         echo "<br>";
                     }
+
 
 
                     $this->query = "INSERT IGNORE INTO fee_types(fee_types) VALUES('$this->fee_types')";
@@ -111,16 +113,6 @@ class import_sheet
             echo "Invalid File : File not Selected";
         }
         
-
-        
-        //     $this->query->bind_param('s',$this->user_mail);
-        //     $this->query->execute();
-        //     if($this->query->affected_rows!=0){
-        //         echo 'Added Successfully';
-        //     }
-        //     else{
-        //         echo 'Please try Again';
-        //     }
         $this->db->close();
     }
 
