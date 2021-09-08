@@ -143,9 +143,10 @@ require_once __DIR__.'/database-connection.php';
                     f_t_d_id INT NOT NULL UNIQUE AUTO_INCREMENT,
                     f_t_id BIGINT(10),
                     amount BIGINT(15),
-                    fee_types_id BIGINT(10),
+                    fee_types_id BIGINT(15),
                     branch_id BIGINT(10),
-                    fee_type_head VARCHAR(100)
+                    fee_type_head VARCHAR(100),
+                    PRIMARY KEY(f_t_id, amount, fee_types_id, branch_id, fee_type_head)
                 )';
                 if($this->db->query($this->query)){
                     echo '6) Table for Financial_Trans_Details created successfully <br>';
@@ -160,11 +161,16 @@ require_once __DIR__.'/database-connection.php';
             }
             else{
                 $this->query = 'CREATE TABLE common_fee_collection(
-                    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                    email VARCHAR(40) NOT NULL UNIQUE,
-                    otp INT(6) DEFAULT 0,
-                    count INT(5) DEFAULT 0,
-                    date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+                    c_f_c_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                    voucher_no BIGINT(10) NOT NULL UNIQUE,
+                    voucher_type VARCHAR(50),
+                    roll_no VARCHAR(50),
+                    admission_no VARCHAR(50),
+                    total_amount BIGINT(15),
+                    branch_id BIGINT(10),
+                    acad_year VARCHAR(50),
+                    financial_year VARCHAR(50),
+                    trans_date VARCHAR(20)
                 )';
                 if($this->db->query($this->query)){
                     echo '7) Table for Common_Fee_Collection created successfully <br>';
@@ -179,11 +185,13 @@ require_once __DIR__.'/database-connection.php';
             }
             else{
                 $this->query = 'CREATE TABLE common_fee_collection_headwise(
-                    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                    email VARCHAR(40) NOT NULL UNIQUE,
-                    otp INT(6) DEFAULT 0,
-                    count INT(5) DEFAULT 0,
-                    date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+                    c_f_c_h_id INT NOT NULL UNIQUE AUTO_INCREMENT,
+                    c_f_c_id BIGINT(10),
+                    fee_types_id BIGINT(15),
+                    fee_type_head VARCHAR(100),
+                    branch_id BIGINT(10),
+                    amount BIGINT(15),
+                    PRIMARY KEY(c_f_c_id, fee_types_id, fee_type_head, branch_id, amount)
                 )';
                 if($this->db->query($this->query)){
                     echo '8) Table for Common_Fee_Collection_Headwise created successfully <br>';
