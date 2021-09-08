@@ -25,6 +25,7 @@ class import_sheet
     private $academic_year;
     private $due_amount;
     private $conc_amount;
+    private $remarks;
 
 
     public function __construct()
@@ -43,13 +44,10 @@ class import_sheet
                 $this->loop_count = 0;
                 while(($this->getData = fgetcsv($this->file, ",")) !== FALSE)
                 {
-                    // echo $this->getData[0];
-                    // echo "-----------";
-                    // if($this->loop_count == 0){
-                    //     $this->loop_count++;
-                    //     continue;
-                    // }
-                    // continue;
+                    if($this->loop_count == 0){
+                        $this->loop_count++;
+                        continue;
+                    }
                     $this->sr = $this->getData[0];
                     $this->transaction_date = $this->getData[1];
                     $this->academic_year = $this->getData[2];
@@ -104,10 +102,14 @@ class import_sheet
                 $this->query = "INSERT INTO fee_types(fee_category_id, fee_category, fee_collection_id, fee_type_head, branch_id) SELECT fee_category.fee_category_id, fee_category.fee_category, fee_collection_type.fee_collection_id, fee_collection_type.fee_type_head, fee_collection_type.branch_id FROM fee_category, fee_collection_type WHERE fee_category.branch_id = fee_collection_type.branch_id";
                 $this->response = $this->db->query($this->query);
 
-                // $this->file = fopen($this->filename, "r");
-                // print_r(fgetcsv($this->file, ",")); 
+                $this->file = fopen($this->filename, "r");
+                $this->loop_count = 0;
                 while(($this->getData = fgetcsv($this->file, ",")) !== FALSE)
                 {
+                    if($this->loop_count == 0){
+                        $this->loop_count++;
+                        continue;
+                    }
                     $this->transaction_date = $this->getData[1];
                     $this->academic_year = $this->getData[2];
                     $this->voucher_type = $this->getData[5];
@@ -164,7 +166,36 @@ class import_sheet
     {
         unset($this->db);
         unset($this->query);
-        unset($this->user_mail);
+        unset($this->filename);
+        unset($this->file);
+        unset($this->sr);
+        unset($this->transaction_date);
+        unset($this->academic_year);
+        unset($this->session);
+        unset($this->alloted);
+        unset($this->voucher_type);
+        unset($this->voucher_no);
+        unset($this->roll_no);
+        unset($this->admission_no);
+        unset($this->status);
+        unset($this->fee_category);
+        unset($this->college_name);
+        unset($this->course_name);
+        unset($this->branch_name);
+        unset($this->batch_name);
+        unset($this->receipt_no);
+        unset($this->fee_types);
+        unset($this->fee_collection_head);
+        unset($this->due_amount);
+        unset($this->total_amount);
+        unset($this->conc_amount);
+        unset($this->scholarship_amount);
+        unset($this->rev_conc_amount);
+        unset($this->write_off_amount);
+        unset($this->adjusted_amount);
+        unset($this->refund_amount);
+        unset($this->fund_transfer_amount);
+        unset($this->remarks);
     }
 }
 

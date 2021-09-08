@@ -8,6 +8,7 @@ require_once 'drop-all.php';
         public function __construct(){
             $this->db = new db();
             $this->db = $this->db->database();
+            echo "<br>";
 
             if($this->db->query('SELECT * FROM branches LIMIT 1')){
                 echo '1) Table for Branches already exists <br>';
