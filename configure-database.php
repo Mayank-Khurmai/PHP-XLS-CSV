@@ -1,30 +1,6 @@
 <?php
 
-$mysqli = new mysqli('localhost','root','','icloudems');
-$mysqli->query('SET foreign_key_checks = 0');
-if ($result = $mysqli->query("SHOW TABLES"))
-{
-    while($row = $result->fetch_array(MYSQLI_NUM))
-    {
-        $mysqli->query('DROP TABLE IF EXISTS '.$row[0]);
-        echo "<br>";
-        echo $row[0].",\n";
-    }
-}
-
-$mysqli->query('SET foreign_key_checks = 1');
-$mysqli->close();
-
-
-echo "<br>---------<br>";
-?>
-
-
-
-
-<?php
-
-require_once __DIR__.'/database-connection.php';
+require_once 'drop-all.php';
 
     class config_db{
         private $db;
@@ -125,7 +101,10 @@ require_once __DIR__.'/database-connection.php';
                     acad_year VARCHAR(50),
                     branch_id BIGINT(10),
                     due_amount BIGINT(10),
-                    conc_amount BIGINT(10)
+                    conc_amount BIGINT(10),
+                    scholarship_amount BIGINT(10),
+                    rev_conc_amount BIGINT(10),
+                    write_off_amount BIGINT(10)
                 )';
                 if($this->db->query($this->query)){
                     echo '5) Table for Financial_Trans created successfully <br>';
@@ -146,6 +125,7 @@ require_once __DIR__.'/database-connection.php';
                     fee_types_id BIGINT(15),
                     branch_id BIGINT(10),
                     fee_type_head VARCHAR(100),
+                    remarks VARCHAR(300),
                     PRIMARY KEY(f_t_id, amount, fee_types_id, branch_id, fee_type_head)
                 )';
                 if($this->db->query($this->query)){
