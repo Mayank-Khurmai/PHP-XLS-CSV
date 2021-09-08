@@ -115,11 +115,17 @@ require_once __DIR__.'/database-connection.php';
             }
             else{
                 $this->query = 'CREATE TABLE financial_trans(
-                    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                    email VARCHAR(40) NOT NULL UNIQUE,
-                    otp INT(6) DEFAULT 0,
-                    count INT(5) DEFAULT 0,
-                    date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+                    f_t_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                    voucher_no BIGINT(10) NOT NULL UNIQUE,
+                    voucher_type VARCHAR(50),
+                    roll_no VARCHAR(50),
+                    admission_no VARCHAR(50),
+                    total_amount BIGINT(15),
+                    trans_date VARCHAR(20),
+                    acad_year VARCHAR(50),
+                    branch_id BIGINT(10),
+                    due_amount BIGINT(10),
+                    conc_amount BIGINT(10)
                 )';
                 if($this->db->query($this->query)){
                     echo '5) Table for Financial_Trans created successfully <br>';
@@ -134,11 +140,12 @@ require_once __DIR__.'/database-connection.php';
             }
             else{
                 $this->query = 'CREATE TABLE financial_trans_details(
-                    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                    email VARCHAR(40) NOT NULL UNIQUE,
-                    otp INT(6) DEFAULT 0,
-                    count INT(5) DEFAULT 0,
-                    date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+                    f_t_d_id INT NOT NULL UNIQUE AUTO_INCREMENT,
+                    f_t_id BIGINT(10),
+                    amount BIGINT(15),
+                    fee_types_id BIGINT(10),
+                    branch_id BIGINT(10),
+                    fee_type_head VARCHAR(100)
                 )';
                 if($this->db->query($this->query)){
                     echo '6) Table for Financial_Trans_Details created successfully <br>';
