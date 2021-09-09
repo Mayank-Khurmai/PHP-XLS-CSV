@@ -55,6 +55,7 @@ require_once 'drop-all.php';
                 $this->query = 'CREATE TABLE fee_collection_type(
                     fee_collection_id INT NOT NULL UNIQUE AUTO_INCREMENT,
                     fee_type_head VARCHAR(100) NOT NULL,
+                    module_category VARCHAR(100) NOT NULL,
                     branch_id BIGINT(10) NOT NULL,
                     PRIMARY KEY(fee_type_head, branch_id)
                 )';
@@ -143,8 +144,7 @@ require_once 'drop-all.php';
             else{
                 $this->query = 'CREATE TABLE common_fee_collection(
                     c_f_c_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                    voucher_no BIGINT(10) NOT NULL UNIQUE,
-                    voucher_type VARCHAR(50),
+                    receipt_no BIGINT(10) NOT NULL UNIQUE,
                     roll_no VARCHAR(50),
                     admission_no VARCHAR(50),
                     total_amount BIGINT(15),
@@ -182,10 +182,45 @@ require_once 'drop-all.php';
                 }
             }
 
+            if($this->db->query('SELECT * FROM modules LIMIT 1')){
+                echo '9) Modules already exists <br>';
+            }
+            else{
+                $this->query = 'CREATE TABLE modules(
+                    module_id INT NOT NULL UNIQUE AUTO_INCREMENT,
+                    module_cat_id BIGINT(10),
+                    module_sub_category VARCHAR(100),
+                    module_category VARCHAR(100),
+                    PRIMARY KEY(module_id))';
+                if($this->db->query($this->query)){
+                    $this->module_category = ['Academic', 'Academic Misc', 'Hostel', 'Hostel Misc', 'Transport', 'Transport Misc'];
+                    $this->module_sub_category = [
+                        ['TUITION FEE', 'Tuition Fees', 'Tuition Fee (Back Paper)', 'Tuition Fee (IBM ClaCCeC)', 'Tuition Fee (IBM Classes)', 'Tuition Fee Debarred', 'Tution Fees debarred paper'],
+                        ['Exam Fee', 'Exam Fee (Back Paper)', 'Exam Fee (CemeCter)', 'Exam Fee (Letral Deploma)', 'Exam Fee (Semester)', 'Exam Fee Debarred', 'Exam Fee ET Eligibility', 'Exam Fees', 'Exam Fees Back Paper', 'Exam Fees Debarred Paper', 'Degree Fees', 'Degree/Convocation/Certificate fee', 'Degree Fee', 'Convocation Fee Head', 'Training & Certification Fee', 'Thesis Fees', 'Student ID Fee Misc', 'Student ID Fee', 'Rechecking Fee', 'Library BookC Recieved', 'Library Books Recieved', 'Letral Fine Fee', 'Misc Exam Fees Back Paper', 'Online Registration Fine even Sem', 'Online Registration Fine odd Sem', 'Rechecking/Scrutiny Fee', 'Registration Fee', 'Registration FIne Even Sem', 'Registration Fine Odd Sem', 'Revaluation Fee', 'Special Backlog fee', 'Fine Fee', 'Adjustable Excess Fee', 'Adjusted_Amount', 'Ajustable_Excess_Amount', 'Excess Amount', 'OTHER FEES', 'Other Fee'],
+                        ['Hostel & Mess Fee'],
+                        ['Security Fee', 'Indisciplinary Fine', 'Sport Activity Received'],
+                        ['Travelling Fee'],
+                        ['Transport Fine', 'Bus Fine']
+                    ];
+                    for($this->i=0; $this->i<count($this->module_category); $this->i++)
+                    {
+                        for($this->j=0; $this->j<count($this->module_sub_category[$this->i]); $this->j++)
+                        {
+                            $this->x = $this->module_sub_category[$this->i][$this->j];
+                            $this->y = $this->module_category[$this->i];
+                            $this->query = "INSERT INTO modules(module_cat_id, module_sub_category, module_category) VALUES('$this->i', '$this->x', '$this->y')";
+                            $this->db->query($this->query);
+                        }
+                    }
+                    echo '9) Table for Modules created successfully <br>';
+                }
+                else{
+                    echo '9) Failed to create Modules table <br>';
+                }
+            }
             $this->db->close();
         }
     }
-
     new config_db();
 
     ?>

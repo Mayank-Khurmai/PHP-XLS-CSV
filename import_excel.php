@@ -86,7 +86,7 @@ class import_sheet
                     $this->response = $this->db->query($this->query);
 
                     
-                    $this->query = "INSERT IGNORE INTO fee_collection_type(fee_type_head, branch_id) VALUES('$this->fee_collection_head', (SELECT branch_id FROM branches WHERE college_name='$this->college_name' AND course_name='$this->course_name' AND branch_name='$this->branch_name' AND batch_name='$this->batch_name'))";
+                    $this->query = "INSERT IGNORE INTO fee_collection_type(fee_type_head, module_category, branch_id) VALUES('$this->fee_collection_head', (SELECT module_category FROM modules WHERE module_sub_category = '$this->fee_collection_head'), (SELECT branch_id FROM branches WHERE college_name='$this->college_name' AND course_name='$this->course_name' AND branch_name='$this->branch_name' AND batch_name='$this->batch_name'))";
                     $this->response = $this->db->query($this->query);
 
 
@@ -94,7 +94,7 @@ class import_sheet
                     $this->response = $this->db->query($this->query);
                     
 
-                    $this->query = "INSERT INTO common_fee_collection(voucher_no, voucher_type, roll_no, admission_no, total_amount, branch_id,  acad_year, financial_year, trans_date) VALUES('$this->voucher_no','$this->voucher_type', '$this->roll_no', '$this->admission_no', '$this->total_amount', (SELECT branch_id FROM branches WHERE college_name='$this->college_name' AND course_name='$this->course_name' AND branch_name='$this->branch_name' AND batch_name='$this->batch_name'), '$this->academic_year', '$this->academic_year', '$this->transaction_date') ON DUPLICATE KEY UPDATE total_amount = total_amount+'$this->total_amount'";
+                    $this->query = "INSERT INTO common_fee_collection(receipt_no, roll_no, admission_no, total_amount, branch_id,  acad_year, financial_year, trans_date) VALUES('$this->receipt_no', '$this->roll_no', '$this->admission_no', '$this->total_amount', (SELECT branch_id FROM branches WHERE college_name='$this->college_name' AND course_name='$this->course_name' AND branch_name='$this->branch_name' AND batch_name='$this->batch_name'), '$this->academic_year', '$this->academic_year', '$this->transaction_date') ON DUPLICATE KEY UPDATE total_amount = total_amount+'$this->total_amount'";
                     $this->response = $this->db->query($this->query);
                 }
                 fclose($this->file);  
@@ -136,7 +136,7 @@ class import_sheet
                     $this->response = $this->db->query($this->query);
 
 
-                    $this->query = "INSERT IGNORE INTO common_fee_collection_headwise(c_f_c_id, fee_types_id, fee_type_head, branch_id, amount) VALUES((SELECT c_f_c_id FROM common_fee_collection WHERE voucher_no='$this->voucher_no'), (SELECT fee_types.fee_types_id FROM fee_types INNER JOIN branches ON fee_types.branch_id = branches.branch_id WHERE branches.college_name='$this->college_name' AND branches.course_name = '$this->course_name' AND branches.branch_name='$this->branch_name' AND branches.batch_name='$this->batch_name' AND fee_types.fee_category = '$this->fee_category' AND fee_types.fee_type_head = '$this->fee_types' LIMIT 1), (SELECT fee_types.fee_type_head FROM fee_types INNER JOIN branches ON fee_types.branch_id = branches.branch_id WHERE branches.college_name='$this->college_name' AND branches.course_name = '$this->course_name' AND branches.branch_name='$this->branch_name' AND branches.batch_name='$this->batch_name' AND fee_types.fee_category = '$this->fee_category' AND fee_types.fee_type_head = '$this->fee_types' LIMIT 1), (SELECT fee_types.branch_id FROM fee_types INNER JOIN branches ON fee_types.branch_id = branches.branch_id WHERE branches.college_name='$this->college_name' AND branches.course_name = '$this->course_name' AND branches.branch_name='$this->branch_name' AND branches.batch_name='$this->batch_name' AND fee_types.fee_category = '$this->fee_category' AND fee_types.fee_type_head = '$this->fee_types' LIMIT 1), '$this->total_amount')";
+                    $this->query = "INSERT IGNORE INTO common_fee_collection_headwise(c_f_c_id, fee_types_id, fee_type_head, branch_id, amount) VALUES((SELECT c_f_c_id FROM common_fee_collection WHERE receipt_no='$this->receipt_no'), (SELECT fee_types.fee_types_id FROM fee_types INNER JOIN branches ON fee_types.branch_id = branches.branch_id WHERE branches.college_name='$this->college_name' AND branches.course_name = '$this->course_name' AND branches.branch_name='$this->branch_name' AND branches.batch_name='$this->batch_name' AND fee_types.fee_category = '$this->fee_category' AND fee_types.fee_type_head = '$this->fee_types' LIMIT 1), (SELECT fee_types.fee_type_head FROM fee_types INNER JOIN branches ON fee_types.branch_id = branches.branch_id WHERE branches.college_name='$this->college_name' AND branches.course_name = '$this->course_name' AND branches.branch_name='$this->branch_name' AND branches.batch_name='$this->batch_name' AND fee_types.fee_category = '$this->fee_category' AND fee_types.fee_type_head = '$this->fee_types' LIMIT 1), (SELECT fee_types.branch_id FROM fee_types INNER JOIN branches ON fee_types.branch_id = branches.branch_id WHERE branches.college_name='$this->college_name' AND branches.course_name = '$this->course_name' AND branches.branch_name='$this->branch_name' AND branches.batch_name='$this->batch_name' AND fee_types.fee_category = '$this->fee_category' AND fee_types.fee_type_head = '$this->fee_types' LIMIT 1), '$this->total_amount')";
                     $this->response = $this->db->query($this->query);
                 }
                 fclose($this->file);  
@@ -149,6 +149,9 @@ class import_sheet
                 echo "<br>6) Added in the Fee_Types table";
                 echo "<br>7) Added in the Financial_Trans_Details table";
                 echo "<br>8) Added in the Common_Fee_Collection_Headwise table";
+                echo "<br>---------------------------------------------------<br>";
+
+                // echo `<form action="export_excel.php" method="post" name="export_data"><button type="submit" id="submit" name="export_excel">Export</button></form>`;
             }
             else{
                 echo "Invalid File : File size < 1 Kb";
