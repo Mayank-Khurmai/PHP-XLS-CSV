@@ -26,6 +26,8 @@ class import_sheet
     private $due_amount;
     private $conc_amount;
     private $remarks;
+    private $module_cat;
+    private $modules_id;
 
 
     public function __construct()
@@ -41,6 +43,15 @@ class import_sheet
                 $this->file = fopen($this->filename, "r");
                 // print_r(fgetcsv($this->file, ","));       //Raw Data
                 // echo "<br><br>";
+
+                $this->academic = array('TUITION FEE', "Tuition Fees", 'Tuition Fee (Back Paper)', 'Tuition Fee (IBM ClaCCeC)', 'Tuition Fee (IBM Classes)', 'Tuition Fee Debarred', 'Tution Fees debarred paper');
+                    $this->academic_misc = array('Exam Fee', 'Exam Fee (Back Paper)', 'Exam Fee (CemeCter)', 'Exam Fee (Letral Deploma)', 'Exam Fee (Semester)', 'Exam Fee Debarred', 'Exam Fee ET Eligibility', 'Exam Fees', 'Exam Fees Back Paper', 'Exam Fees Debarred Paper', 'Degree Fees', 'Degree/Convocation/Certificate fee', 'Degree Fee', 'Convocation Fee Head', 'Training & Certification Fee', 'Thesis Fees', 'Student ID Fee Misc', 'Student ID Fee', 'Rechecking Fee', 'Library BookC Recieved', 'Library Books Recieved', 'Letral Fine Fee', 'Misc Exam Fees Back Paper', 'Online Registration Fine even Sem', 'Online Registration Fine odd Sem', 'Reckecking/Scrutiny Fee', 'Registration Fee', 'Registration FIne Even Sem', 'Registration Fine Odd Sem', 'Revaluation Fee', 'Special Backlog fee', 'Fine Fee', 'Adjustable Excess Fee', 'Adjusted_Amount', 'Ajustable_Excess_Amount', 'Excess Amount', 'OTHER FEES', 'Other Fee');
+                    $this->hostel = array('Hostel & Mess Fee');
+                    $this->hostel_misc = array('Security Fee', 'Indisciplinary Fine', 'Sport Activity Received');
+                    $this->transport = array('Travelling Fee');
+                    $this->transport_misc = array('Transport Fine', 'Bus Fine');
+
+
                 $this->loop_count = 0;
                 while(($this->getData = fgetcsv($this->file, ",")) !== FALSE)
                 {
@@ -78,15 +89,41 @@ class import_sheet
                     $this->remarks = $this->getData[26];
 
 
+                    if(in_array($this->fee_types,$this->academic)){
+                        $this->module_cat = 'Academic';
+                        $this->modules_id = 1;
+                    }
+                    else if(in_array($this->fee_types,$this->academic_misc)){
+                        $this->module_cat = 'Academic Misc';
+                        $this->modules_id = 2;
+                    }
+                    else if(in_array($this->fee_types,$this->hostel)){
+                        $this->module_cat = 'Hostel';
+                        $this->modules_id = 3;
+                    }
+                    else if(in_array($this->fee_types,$this->hostel_misc)){
+                        $this->module_cat = 'Hostel Misc';
+                        $this->modules_id = 4;
+                    }
+                    else if(in_array($this->fee_types,$this->transport)){
+                        $this->module_cat = 'Transport';
+                        $this->modules_id = 5;
+                    }
+                    else{
+                        $this->module_cat = 'Transport Misc';
+                        $this->modules_id = 6;
+                    }
+
+                
                     $this->query = "INSERT IGNORE INTO branches(college_name, course_name, branch_name, batch_name) VALUES('$this->college_name', '$this->course_name', '$this->branch_name', '$this->batch_name')";
                     $this->response = $this->db->query($this->query);
 
                     
-                    $this->query = "INSERT IGNORE INTO fee_category(fee_category, branch_id) VALUES('$this->fee_category', (SELECT branch_id FROM branches WHERE college_name='$this->college_name' AND course_name='$this->course_name' AND branch_name='$this->branch_name' AND batch_name='$this->batch_name'))";
+                    $this->query = "INSERT INTO fee_category(fee_category, branch_id) VALUES('$this->fee_category', (SELECT branch_id FROM branches WHERE college_name='$this->college_name' AND course_name='$this->course_name' AND branch_name='$this->branch_name' AND batch_name='$this->batch_name'))";
                     $this->response = $this->db->query($this->query);
 
                     
-                    $this->query = "INSERT IGNORE INTO fee_collection_type(fee_type_head, module_category, branch_id) VALUES('$this->fee_collection_head', (SELECT module_category FROM modules WHERE module_sub_category = '$this->fee_collection_head'), (SELECT branch_id FROM branches WHERE college_name='$this->college_name' AND course_name='$this->course_name' AND branch_name='$this->branch_name' AND batch_name='$this->batch_name'))";
+                    $this->query = "INSERT IGNORE INTO fee_collection_type(module_category, fee_type_head, branch_id) VALUES('$this->module_cat', '$this->fee_types', (SELECT branch_id FROM branches WHERE college_name='$this->college_name' AND course_name='$this->course_name' AND branch_name='$this->branch_name' AND batch_name='$this->batch_name'))";
                     $this->response = $this->db->query($this->query);
 
 
@@ -94,7 +131,8 @@ class import_sheet
                     $this->response = $this->db->query($this->query);
                     
 
-                    $this->query = "INSERT INTO common_fee_collection(receipt_no, roll_no, admission_no, total_amount, branch_id,  acad_year, financial_year, trans_date) VALUES('$this->receipt_no', '$this->roll_no', '$this->admission_no', '$this->total_amount', (SELECT branch_id FROM branches WHERE college_name='$this->college_name' AND course_name='$this->course_name' AND branch_name='$this->branch_name' AND batch_name='$this->batch_name'), '$this->academic_year', '$this->academic_year', '$this->transaction_date') ON DUPLICATE KEY UPDATE total_amount = total_amount+'$this->total_amount'";
+                    $this->query = "INSERT INTO common_fee_collection(receipt_no, module_id, roll_no, admission_no, total_amount, branch_id,  acad_year, financial_year, trans_date) 
+                    VALUES('$this->receipt_no', '$this->modules_id', '$this->roll_no', '$this->admission_no', '$this->total_amount', (SELECT branch_id FROM branches WHERE college_name='$this->college_name' AND course_name='$this->course_name' AND branch_name='$this->branch_name' AND batch_name='$this->batch_name'), '$this->academic_year', '$this->academic_year', '$this->transaction_date') ON DUPLICATE KEY UPDATE total_amount = total_amount+'$this->total_amount'";
                     $this->response = $this->db->query($this->query);
                 }
                 fclose($this->file);  
@@ -132,11 +170,48 @@ class import_sheet
                     $this->write_off_amount = $this->getData[22];
                     $this->remarks = $this->getData[26];
 
-                    $this->query = "INSERT IGNORE INTO financial_trans_details(f_t_id, amount, fee_types_id, branch_id, fee_type_head, remarks) VALUES((SELECT f_t_id FROM financial_trans WHERE voucher_no='$this->voucher_no'), '$this->total_amount', (SELECT fee_types.fee_types_id FROM fee_types INNER JOIN branches ON fee_types.branch_id = branches.branch_id WHERE branches.college_name='$this->college_name' AND branches.course_name = '$this->course_name' AND branches.branch_name='$this->branch_name' AND branches.batch_name='$this->batch_name' AND fee_types.fee_category = '$this->fee_category' AND fee_types.fee_type_head = '$this->fee_types' LIMIT 1), (SELECT fee_types.branch_id FROM fee_types INNER JOIN branches ON fee_types.branch_id = branches.branch_id WHERE branches.college_name='$this->college_name' AND branches.course_name = '$this->course_name' AND branches.branch_name='$this->branch_name' AND branches.batch_name='$this->batch_name' AND fee_types.fee_category = '$this->fee_category' AND fee_types.fee_type_head = '$this->fee_types' LIMIT 1), (SELECT fee_types.fee_type_head FROM fee_types INNER JOIN branches ON fee_types.branch_id = branches.branch_id WHERE branches.college_name='$this->college_name' AND branches.course_name = '$this->course_name' AND branches.branch_name='$this->branch_name' AND branches.batch_name='$this->batch_name' AND fee_types.fee_category = '$this->fee_category' AND fee_types.fee_type_head = '$this->fee_types' LIMIT 1), '$this->remarks')";
+                    if(in_array($this->fee_types,$this->academic)){
+                        $this->module_cat = 'Academic';
+                        $this->modules_id = 1;
+                    }
+                    else if(in_array($this->fee_types,$this->academic_misc)){
+                        $this->module_cat = 'Academic Misc';
+                        $this->modules_id = 2;
+                    }
+                    else if(in_array($this->fee_types,$this->hostel)){
+                        $this->module_cat = 'Hostel';
+                        $this->modules_id = 3;
+                    }
+                    else if(in_array($this->fee_types,$this->hostel_misc)){
+                        $this->module_cat = 'Hostel Misc';
+                        $this->modules_id = 4;
+                    }
+                    else if(in_array($this->fee_types,$this->transport)){
+                        $this->module_cat = 'Transport';
+                        $this->modules_id = 5;
+                    }
+                    else{
+                        $this->module_cat = 'Transport Misc';
+                        $this->modules_id = 6;
+                    }
+
+                    $this->query = "INSERT IGNORE INTO financial_trans_details(f_t_id, amount, fee_types_id, branch_id, fee_type_head, remarks) VALUES(
+                        (SELECT f_t_id FROM financial_trans WHERE voucher_no='$this->voucher_no'), 
+                        '$this->total_amount', 
+                        (SELECT fee_types.fee_types_id FROM fee_types INNER JOIN branches ON fee_types.branch_id = branches.branch_id WHERE branches.college_name='$this->college_name' AND branches.course_name = '$this->course_name' AND branches.branch_name='$this->branch_name' AND branches.batch_name='$this->batch_name' AND fee_types.fee_category = '$this->fee_category' AND fee_types.fee_type_head = '$this->fee_types' LIMIT 1), 
+                        (SELECT fee_types.branch_id FROM fee_types INNER JOIN branches ON fee_types.branch_id = branches.branch_id WHERE branches.college_name='$this->college_name' AND branches.course_name = '$this->course_name' AND branches.branch_name='$this->branch_name' AND branches.batch_name='$this->batch_name' AND fee_types.fee_category = '$this->fee_category' AND fee_types.fee_type_head = '$this->fee_types' LIMIT 1), 
+                        '$this->fee_types', 
+                        '$this->remarks')";
                     $this->response = $this->db->query($this->query);
 
 
-                    $this->query = "INSERT IGNORE INTO common_fee_collection_headwise(c_f_c_id, fee_types_id, fee_type_head, branch_id, amount) VALUES((SELECT c_f_c_id FROM common_fee_collection WHERE receipt_no='$this->receipt_no'), (SELECT fee_types.fee_types_id FROM fee_types INNER JOIN branches ON fee_types.branch_id = branches.branch_id WHERE branches.college_name='$this->college_name' AND branches.course_name = '$this->course_name' AND branches.branch_name='$this->branch_name' AND branches.batch_name='$this->batch_name' AND fee_types.fee_category = '$this->fee_category' AND fee_types.fee_type_head = '$this->fee_types' LIMIT 1), (SELECT fee_types.fee_type_head FROM fee_types INNER JOIN branches ON fee_types.branch_id = branches.branch_id WHERE branches.college_name='$this->college_name' AND branches.course_name = '$this->course_name' AND branches.branch_name='$this->branch_name' AND branches.batch_name='$this->batch_name' AND fee_types.fee_category = '$this->fee_category' AND fee_types.fee_type_head = '$this->fee_types' LIMIT 1), (SELECT fee_types.branch_id FROM fee_types INNER JOIN branches ON fee_types.branch_id = branches.branch_id WHERE branches.college_name='$this->college_name' AND branches.course_name = '$this->course_name' AND branches.branch_name='$this->branch_name' AND branches.batch_name='$this->batch_name' AND fee_types.fee_category = '$this->fee_category' AND fee_types.fee_type_head = '$this->fee_types' LIMIT 1), '$this->total_amount')";
+                    $this->query = "INSERT IGNORE INTO common_fee_collection_headwise(c_f_c_id, fee_types_id, module_id, fee_type_head, branch_id, amount) VALUES(
+                        (SELECT c_f_c_id FROM common_fee_collection WHERE receipt_no='$this->receipt_no'), 
+                        (SELECT fee_types.fee_types_id FROM fee_types INNER JOIN branches ON fee_types.branch_id = branches.branch_id WHERE branches.college_name='$this->college_name' AND branches.course_name = '$this->course_name' AND branches.branch_name='$this->branch_name' AND branches.batch_name='$this->batch_name' AND fee_types.fee_category = '$this->fee_category' AND fee_types.fee_type_head = '$this->fee_types' LIMIT 1), 
+                        '$this->modules_id', 
+                        (SELECT fee_types.fee_type_head FROM fee_types INNER JOIN branches ON fee_types.branch_id = branches.branch_id WHERE branches.college_name='$this->college_name' AND branches.course_name = '$this->course_name' AND branches.branch_name='$this->branch_name' AND branches.batch_name='$this->batch_name' AND fee_types.fee_category = '$this->fee_category' AND fee_types.fee_type_head = '$this->fee_types' LIMIT 1), 
+                        (SELECT fee_types.branch_id FROM fee_types INNER JOIN branches ON fee_types.branch_id = branches.branch_id WHERE branches.college_name='$this->college_name' AND branches.course_name = '$this->course_name' AND branches.branch_name='$this->branch_name' AND branches.batch_name='$this->batch_name' AND fee_types.fee_category = '$this->fee_category' AND fee_types.fee_type_head = '$this->fee_types' LIMIT 1), 
+                        '$this->total_amount')";
                     $this->response = $this->db->query($this->query);
                 }
                 fclose($this->file);  
