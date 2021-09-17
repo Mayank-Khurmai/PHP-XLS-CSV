@@ -45,11 +45,11 @@ class import_sheet
                 // echo "<br><br>";
 
                 $this->academic = array('TUITION FEE', "Tuition Fees", 'Tuition Fee (Back Paper)', 'Tuition Fee (IBM ClaCCeC)', 'Tuition Fee (IBM Classes)', 'Tuition Fee Debarred', 'Tution Fees debarred paper');
-                    $this->academic_misc = array('Exam Fee', 'Exam Fee (Back Paper)', 'Exam Fee (CemeCter)', 'Exam Fee (Letral Deploma)', 'Exam Fee (Semester)', 'Exam Fee Debarred', 'Exam Fee ET Eligibility', 'Exam Fees', 'Exam Fees Back Paper', 'Exam Fees Debarred Paper', 'Degree Fees', 'Degree/Convocation/Certificate fee', 'Degree Fee', 'Convocation Fee Head', 'Training & Certification Fee', 'Thesis Fees', 'Student ID Fee Misc', 'Student ID Fee', 'Rechecking Fee', 'Library BookC Recieved', 'Library Books Recieved', 'Letral Fine Fee', 'Misc Exam Fees Back Paper', 'Online Registration Fine even Sem', 'Online Registration Fine odd Sem', 'Reckecking/Scrutiny Fee', 'Registration Fee', 'Registration FIne Even Sem', 'Registration Fine Odd Sem', 'Revaluation Fee', 'Special Backlog fee', 'Fine Fee', 'Adjustable Excess Fee', 'Adjusted_Amount', 'Ajustable_Excess_Amount', 'Excess Amount', 'OTHER FEES', 'Other Fee');
-                    $this->hostel = array('Hostel & Mess Fee');
-                    $this->hostel_misc = array('Security Fee', 'Indisciplinary Fine', 'Sport Activity Received');
-                    $this->transport = array('Travelling Fee');
-                    $this->transport_misc = array('Transport Fine', 'Bus Fine');
+                $this->academic_misc = array('Exam Fee', 'Exam Fee (Back Paper)', 'Exam Fee (CemeCter)', 'Exam Fee (Letral Deploma)', 'Exam Fee (Semester)', 'Exam Fee Debarred', 'Exam Fee ET Eligibility', 'Exam Fees', 'Exam Fees Back Paper', 'Exam Fees Debarred Paper', 'Degree Fees', 'Degree/Convocation/Certificate fee', 'Degree Fee', 'Convocation Fee Head', 'Training & Certification Fee', 'Thesis Fees', 'Student ID Fee Misc', 'Student ID Fee', 'Rechecking Fee', 'Library BookC Recieved', 'Library Books Recieved', 'Letral Fine Fee', 'Misc Exam Fees Back Paper', 'Online Registration Fine even Sem', 'Online Registration Fine odd Sem', 'Reckecking/Scrutiny Fee', 'Registration Fee', 'Registration FIne Even Sem', 'Registration Fine Odd Sem', 'Revaluation Fee', 'Special Backlog fee', 'Fine Fee', 'Adjustable Excess Fee', 'Adjusted_Amount', 'Ajustable_Excess_Amount', 'Excess Amount', 'OTHER FEES', 'Other Fee');
+                $this->hostel = array('Hostel & Mess Fee');
+                $this->hostel_misc = array('Security Fee', 'Indisciplinary Fine', 'Sport Activity Received');
+                $this->transport = array('Travelling Fee');
+                $this->transport_misc = array('Transport Fine', 'Bus Fine');
 
 
                 $this->loop_count = 0;
@@ -214,6 +214,9 @@ class import_sheet
                         '$this->total_amount')";
                     $this->response = $this->db->query($this->query);
                 }
+
+                $this->query = "ALTER TABLE fee_collection_type DROP COLUMN fee_type_head";
+                $this->response = $this->db->query($this->query);
                 fclose($this->file);  
 
                 echo "<br>1) Added in the Branches table";
